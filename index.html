@@ -369,51 +369,74 @@ Whether we're building Scalable web platforms, AI Agents with long-term memory, 
         width: 28px; /* Stretched effect */
     }
 </style>
-
 <script>
+    // 1. Desktop Arrows Function
+    function scrollExpertise(amount) {
+        const container = document.getElementById('expertise-slider');
+        container.scrollBy({ left: amount, behavior: 'smooth' });
+    }
+
+    // 2. Dots & Auto-Swipe Logic
     const slider = document.getElementById('expertise-slider');
     const dotsContainer = document.getElementById('expertise-dots');
     const slides = slider.querySelectorAll('.snap-center');
-    
-    // Create Dots based on card count
+    let currentIndex = 0;
+
+    // Create Dots automatically
+    dotsContainer.innerHTML = ''; // Clear existing dots first
     slides.forEach((_, i) => {
         const dot = document.createElement('div');
         dot.classList.add('custom-dot');
         if (i === 0) dot.classList.add('active');
         dot.addEventListener('click', () => {
-            slider.scrollTo({
-                left: slides[i].offsetLeft - slider.offsetLeft,
-                behavior: 'smooth'
-            });
+            scrollToIndex(i);
         });
         dotsContainer.appendChild(dot);
     });
 
     const allDots = document.querySelectorAll('.custom-dot');
 
-    // Update Dots highlight when user swipes/scrolls
+    // Helper Function to Scroll accurately
+    function scrollToIndex(index) {
+        if (index >= slides.length) index = 0;
+        if (index < 0) index = slides.length - 1;
+        
+        const targetSlide = slides[index];
+        slider.scrollTo({
+            left: targetSlide.offsetLeft - slider.offsetLeft,
+            behavior: 'smooth'
+        });
+        currentIndex = index;
+    }
+
+    // Update Dots on Scroll (Real-time sync for Mobile & Desktop)
     slider.addEventListener('scroll', () => {
-        const index = Math.round(slider.scrollLeft / (slides[0].offsetWidth + 24)); 
+        const index = Math.round(slider.scrollLeft / (slider.scrollWidth / slides.length));
         allDots.forEach((dot, i) => {
             dot.classList.toggle('active', i === index);
         });
+        currentIndex = index;
     });
 
-    // Auto-swipe every 4 seconds
-    let swipeTimer = setInterval(() => {
-        let currentIndex = Math.round(slider.scrollLeft / (slides[0].offsetWidth + 24));
-        let nextIndex = (currentIndex + 1) % slides.length;
-        
-        slider.scrollTo({
-            left: slides[nextIndex].offsetLeft - slider.offsetLeft,
-            behavior: 'smooth'
-        });
+    // Auto-Swipe Logic (Har 4 seconds mein)
+    let autoSwipe = setInterval(() => {
+        currentIndex++;
+        scrollToIndex(currentIndex);
     }, 4000);
 
-    // Stop auto-swipe when user interacts
-    const stopTimer = () => clearInterval(swipeTimer);
-    slider.addEventListener('mousedown', stopTimer);
-    slider.addEventListener('touchstart', stopTimer);
+    // Stop auto-swipe on user interaction
+    const resetTimer = () => {
+        clearInterval(autoSwipe);
+        autoSwipe = setInterval(() => {
+            currentIndex++;
+            scrollToIndex(currentIndex);
+        }, 4000);
+    };
+
+    slider.addEventListener('touchstart', () => clearInterval(autoSwipe));
+    slider.addEventListener('touchend', resetTimer);
+    slider.addEventListener('mousedown', () => clearInterval(autoSwipe));
+    slider.addEventListener('mouseup', resetTimer);
 </script>
     <style>
         .no-scrollbar::-webkit-scrollbar { display: none; }
