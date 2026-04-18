@@ -348,7 +348,73 @@ Whether we're building Scalable web platforms, AI Agents with long-term memory, 
 
         </div>
     </div>
+<div id="expertise-dots" class="flex justify-center gap-3 mt-10 relative z-20">
+    </div>
 
+<style>
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    .custom-dot {
+        width: 10px;
+        height: 10px;
+        background-color: #374151; /* Slate-700 */
+        border-radius: 999px;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        cursor: pointer;
+    }
+
+    .custom-dot.active {
+        background-color: #6366f1; /* Indigo-500 */
+        width: 28px; /* Stretched effect */
+    }
+</style>
+
+<script>
+    const slider = document.getElementById('expertise-slider');
+    const dotsContainer = document.getElementById('expertise-dots');
+    const slides = slider.querySelectorAll('.snap-center');
+    
+    // Create Dots based on card count
+    slides.forEach((_, i) => {
+        const dot = document.createElement('div');
+        dot.classList.add('custom-dot');
+        if (i === 0) dot.classList.add('active');
+        dot.addEventListener('click', () => {
+            slider.scrollTo({
+                left: slides[i].offsetLeft - slider.offsetLeft,
+                behavior: 'smooth'
+            });
+        });
+        dotsContainer.appendChild(dot);
+    });
+
+    const allDots = document.querySelectorAll('.custom-dot');
+
+    // Update Dots highlight when user swipes/scrolls
+    slider.addEventListener('scroll', () => {
+        const index = Math.round(slider.scrollLeft / (slides[0].offsetWidth + 24)); 
+        allDots.forEach((dot, i) => {
+            dot.classList.toggle('active', i === index);
+        });
+    });
+
+    // Auto-swipe every 4 seconds
+    let swipeTimer = setInterval(() => {
+        let currentIndex = Math.round(slider.scrollLeft / (slides[0].offsetWidth + 24));
+        let nextIndex = (currentIndex + 1) % slides.length;
+        
+        slider.scrollTo({
+            left: slides[nextIndex].offsetLeft - slider.offsetLeft,
+            behavior: 'smooth'
+        });
+    }, 4000);
+
+    // Stop auto-swipe when user interacts
+    const stopTimer = () => clearInterval(swipeTimer);
+    slider.addEventListener('mousedown', stopTimer);
+    slider.addEventListener('touchstart', stopTimer);
+</script>
     <style>
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
@@ -371,7 +437,7 @@ Whether we're building Scalable web platforms, AI Agents with long-term memory, 
             <p class="text-gray-400 mb-12 text-lg">
 Seeking global collaborations and open to full-time opportunities            </p>
             <div class="flex flex-col md:flex-row justify-center gap-6 items-center">
-                <a href="mailto:your-email@noorilmz.tech" class="text-2xl font-bold border-b-2 border-indigo-500 pb-2 hover:text-indigo-400 transition">
+                <a href="mailto:noorilmztech@gmail.com" class="text-2xl font-bold border-b-2 border-indigo-500 pb-2 hover:text-indigo-400 transition">
                     noorilmztech@gmail.com
                 </a>
                 <!-- <div class="flex gap-6">
